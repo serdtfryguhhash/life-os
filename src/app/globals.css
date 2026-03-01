@@ -1,26 +1,223 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   Tailwind theme inline bindings
+   ============================================================ */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ============================================================
+   LifeOS Custom Properties — Dark-first Design System
+   ============================================================ */
+:root {
+  --radius: 0.625rem;
+
+  /* Core palette */
+  --los-bg: #0A0A0F;
+  --los-surface: #13131A;
+  --los-surface-elevated: #1A1A25;
+  --los-border: #2A2A3A;
+  --los-primary: #6C5CE7;
+  --los-secondary: #00D2FF;
+  --los-success: #00E676;
+  --los-warning: #FFD600;
+  --los-danger: #FF5252;
+  --los-text: #F0F0F5;
+  --los-text-secondary: #8888A0;
+  --los-text-muted: #55556A;
+
+  /* Map to shadcn variables */
+  --background: #0A0A0F;
+  --foreground: #F0F0F5;
+  --card: #13131A;
+  --card-foreground: #F0F0F5;
+  --popover: #13131A;
+  --popover-foreground: #F0F0F5;
+  --primary: #6C5CE7;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1A1A25;
+  --secondary-foreground: #F0F0F5;
+  --muted: #1A1A25;
+  --muted-foreground: #8888A0;
+  --accent: #1A1A25;
+  --accent-foreground: #F0F0F5;
+  --destructive: #FF5252;
+  --border: #2A2A3A;
+  --input: #2A2A3A;
+  --ring: #6C5CE7;
+
+  /* Charts */
+  --chart-1: #6C5CE7;
+  --chart-2: #00D2FF;
+  --chart-3: #00E676;
+  --chart-4: #FFD600;
+  --chart-5: #FF5252;
+
+  /* Sidebar */
+  --sidebar: #0A0A0F;
+  --sidebar-foreground: #F0F0F5;
+  --sidebar-primary: #6C5CE7;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #1A1A25;
+  --sidebar-accent-foreground: #F0F0F5;
+  --sidebar-border: #2A2A3A;
+  --sidebar-ring: #6C5CE7;
+}
+
+/* ============================================================
+   Base styles
+   ============================================================ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--los-bg);
+    color: var(--los-text);
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Smooth transitions everywhere */
+  *,
+  *::before,
+  *::after {
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================================
+   Custom scrollbar
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--los-primary);
+  border-radius: 999px;
+  opacity: 0.5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7d6ff0;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--los-primary) transparent;
+}
+
+/* ============================================================
+   Utility classes
+   ============================================================ */
+
+/* Glassmorphism panel */
+.glass {
+  background: rgba(19, 19, 26, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(42, 42, 58, 0.5);
+}
+
+/* Gradient text — purple to cyan */
+.gradient-text {
+  background: linear-gradient(135deg, #6C5CE7, #00D2FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient border */
+.gradient-border {
+  position: relative;
+  border: none;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, #6C5CE7, #00D2FF);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+/* Subtle purple glow */
+.glow {
+  box-shadow:
+    0 0 15px rgba(108, 92, 231, 0.15),
+    0 0 45px rgba(108, 92, 231, 0.05);
+}
+
+/* Gradient background for accent elements */
+.gradient-bg {
+  background: linear-gradient(135deg, #6C5CE7, #00D2FF);
 }
