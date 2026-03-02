@@ -25,6 +25,7 @@ import { useLifeOS } from "@/stores";
 import type { PomodoroType } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { FocusStats } from "@/components/features/focus-stats";
 
 // -- Timer Ring SVG --
 function TimerRing({
@@ -614,6 +615,11 @@ export default function FocusPage() {
               </ResponsiveContainer>
             </div>
           </motion.div>
+        </div>
+
+        {/* Extended Focus Stats */}
+        <div className="mt-6">
+          <FocusStats />
         </div>
       </div>
     </div>

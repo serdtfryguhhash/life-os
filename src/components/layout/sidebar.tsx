@@ -18,8 +18,13 @@ import {
   Settings,
   Menu,
   X,
+  Bot,
+  FileText,
+  LayoutTemplate,
 } from 'lucide-react';
 import { DataExport } from '@/components/data-export';
+import { StreakBadge } from '@/components/shared/StreakBadge';
+import { XPBar } from '@/components/shared/XPBar';
 import {
   Tooltip,
   TooltipContent,
@@ -42,6 +47,9 @@ const NAV_ITEMS = [
   { label: 'Notes', href: '/notes', icon: StickyNote, color: '#00D2FF' },
   { label: 'Focus', href: '/focus', icon: Timer, color: '#FF5252' },
   { label: 'Review', href: '/review', icon: ClipboardCheck, color: '#2DD4BF' },
+  { label: 'Coach', href: '/coach', icon: Bot, color: '#6C5CE7' },
+  { label: 'Report', href: '/report', icon: FileText, color: '#00D2FF' },
+  { label: 'Templates', href: '/templates', icon: LayoutTemplate, color: '#00E676' },
 ] as const;
 
 // ============================================================
@@ -174,8 +182,14 @@ export function Sidebar() {
               </button>
             </div>
 
+            {/* Streak + XP in mobile */}
+            <div className="mb-4 px-3 space-y-2">
+              <StreakBadge />
+              <XPBar compact />
+            </div>
+
             {/* Mobile nav items */}
-            <nav className="flex flex-1 flex-col gap-1">
+            <nav className="flex flex-1 flex-col gap-1 overflow-y-auto">
               {NAV_ITEMS.map((item) => renderNavItem(item, true))}
             </nav>
 
@@ -213,7 +227,7 @@ export function Sidebar() {
       >
         <div className="flex h-full flex-col px-3 py-4">
           {/* Logo */}
-          <div className="mb-8 flex items-center gap-3 px-3">
+          <div className="mb-4 flex items-center gap-3 px-3">
             <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6C5CE7] to-[#00D2FF] text-sm font-bold text-white shadow-lg shadow-[#6C5CE7]/20">
               L
             </div>
@@ -232,8 +246,26 @@ export function Sidebar() {
             </AnimatePresence>
           </div>
 
+          {/* Streak Badge in sidebar */}
+          <div className="mb-4 px-1">
+            {expanded ? (
+              <StreakBadge />
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex justify-center">
+                    <StreakBadge compact />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right" sideOffset={12}>
+                  Daily Streak
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+
           {/* Navigation */}
-          <nav className="flex flex-1 flex-col gap-1">
+          <nav className="flex flex-1 flex-col gap-1 overflow-y-auto">
             {NAV_ITEMS.map((item) => renderNavItem(item, expanded))}
           </nav>
 

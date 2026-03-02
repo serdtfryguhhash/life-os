@@ -34,6 +34,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { MoodAnalytics } from "@/components/features/mood-analytics";
 
 const MOOD_EMOJIS: Record<Mood, string> = {
   1: "\uD83D\uDE22",
@@ -586,6 +587,16 @@ export default function JournalPage() {
           />
         </motion.div>
 
+
+        {/* Mood Analytics */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15, ease: [0.4, 0, 0.2, 1] as const }}
+          className="mb-8"
+        >
+          <MoodAnalytics />
+        </motion.div>
         {/* Entry List */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

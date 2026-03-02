@@ -18,13 +18,54 @@ import type {
   TransactionType,
   GoalTimeframe,
 } from '@/types';
+import type { Achievement } from '@/lib/gamification';
+
+// ============================================================
+// New types for stickiness features
+// ============================================================
+
+export interface CoachMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+}
+
+export interface WeeklyReport {
+  id: string;
+  weekOf: string;
+  summary: string;
+  generatedAt: string;
+  data: {
+    tasksCompleted: number;
+    habitsCompleted: number;
+    journalEntries: number;
+    focusMinutes: number;
+    moodAverage: number;
+    netIncome: number;
+  };
+}
+
+export interface Template {
+  id: string;
+  name: string;
+  type: 'journal' | 'task' | 'goal';
+  content: Record<string, unknown>;
+  createdAt: string;
+}
+
+export interface DailyChallengeState {
+  date: string;
+  challengeId: string;
+  completed: boolean;
+}
 
 // ============================================================
 // Store interface
 // ============================================================
 
 interface LifeOSState {
-  // --- Data ---
+  // --- Existing Data ---
   events: CalendarEvent[];
   tasks: Task[];
   habits: Habit[];
@@ -34,6 +75,18 @@ interface LifeOSState {
   notes: Note[];
   pomodoroSessions: PomodoroSession[];
   pomodoroSettings: PomodoroSettings;
+
+  // --- New Stickiness Data ---
+  xp: number;
+  level: number;
+  achievements: Achievement[];
+  streakData: { currentStreak: number; longestStreak: number };
+  coachMessages: CoachMessage[];
+  weeklyReports: WeeklyReport[];
+  templates: Template[];
+  dailyChallenges: DailyChallengeState[];
+  lifeScoreHistory: { date: string; score: number }[];
+  newAchievements: Achievement[]; // queue for toast display
 
   // --- Calendar Events ---
   addEvent: (event: Omit<CalendarEvent, 'id'>) => void;
@@ -76,6 +129,31 @@ interface LifeOSState {
   // --- Pomodoro ---
   addPomodoroSession: (session: Omit<PomodoroSession, 'id'>) => void;
   updatePomodoroSettings: (settings: Partial<PomodoroSettings>) => void;
+
+  // --- Gamification ---
+  addXP: (amount: number) => void;
+  dismissAchievement: () => void;
+
+  // --- Coach ---
+  addCoachMessage: (message: Omit<CoachMessage, 'id' | 'timestamp'>) => void;
+  clearCoachMessages: () => void;
+
+  // --- Weekly Reports ---
+  addWeeklyReport: (report: Omit<WeeklyReport, 'id'>) => void;
+
+  // --- Templates ---
+  addTemplate: (template: Omit<Template, 'id' | 'createdAt'>) => void;
+  updateTemplate: (id: string, updates: Partial<Template>) => void;
+  deleteTemplate: (id: string) => void;
+
+  // --- Daily Challenge ---
+  completeDailyChallenge: (date: string, challengeId: string) => void;
+
+  // --- Life Score ---
+  addLifeScoreEntry: (date: string, score: number) => void;
+
+  // --- Streak ---
+  updateStreakData: (data: { currentStreak: number; longestStreak: number }) => void;
 }
 
 // ============================================================
@@ -577,7 +655,7 @@ const seedNotes: Note[] = [
 
 export const useLifeOS = create<LifeOSState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // ---- Initial data ----
       events: seedEvents,
       tasks: seedTasks,
@@ -592,6 +670,18 @@ export const useLifeOS = create<LifeOSState>()(
         shortBreak: 5,
         longBreak: 15,
       },
+
+      // ---- Stickiness data ----
+      xp: 150,
+      level: 2,
+      achievements: [],
+      streakData: { currentStreak: 1, longestStreak: 1 },
+      coachMessages: [],
+      weeklyReports: [],
+      templates: [],
+      dailyChallenges: [],
+      lifeScoreHistory: [],
+      newAchievements: [],
 
       // ---- Calendar Events ----
       addEvent: (event) =>
@@ -609,7 +699,7 @@ export const useLifeOS = create<LifeOSState>()(
           events: state.events.filter((e) => e.id !== id),
         })),
 
-      // ---- Tasks ----
+      // ---- Tasks (with XP for completion) ----
       addTask: (task) =>
         set((state) => ({
           tasks: [
@@ -618,11 +708,20 @@ export const useLifeOS = create<LifeOSState>()(
           ],
         })),
       updateTask: (id, updates) =>
-        set((state) => ({
-          tasks: state.tasks.map((t) =>
-            t.id === id ? { ...t, ...updates } : t
-          ),
-        })),
+        set((state) => {
+          const oldTask = state.tasks.find((t) => t.id === id);
+          const isCompletingTask =
+            oldTask &&
+            oldTask.status !== 'done' &&
+            updates.status === 'done';
+          const xpGain = isCompletingTask ? 10 : 0;
+          return {
+            tasks: state.tasks.map((t) =>
+              t.id === id ? { ...t, ...updates } : t
+            ),
+            xp: state.xp + xpGain,
+          };
+        }),
       deleteTask: (id) =>
         set((state) => ({
           tasks: state.tasks.filter((t) => t.id !== id),
@@ -641,7 +740,7 @@ export const useLifeOS = create<LifeOSState>()(
           ),
         })),
 
-      // ---- Habits ----
+      // ---- Habits (with XP for toggling on) ----
       addHabit: (habit) =>
         set((state) => ({
           habits: [
@@ -666,19 +765,25 @@ export const useLifeOS = create<LifeOSState>()(
           habits: state.habits.filter((h) => h.id !== id),
         })),
       toggleHabitCompletion: (habitId, date) =>
-        set((state) => ({
-          habits: state.habits.map((h) => {
+        set((state) => {
+          let xpGain = 0;
+          const newHabits = state.habits.map((h) => {
             if (h.id !== habitId) return h;
             const current = h.completions[date] || 0;
             const next = current >= h.target ? 0 : current + 1;
+            // Award XP when reaching target
+            if (next === h.target && current < h.target) {
+              xpGain = 15;
+            }
             return {
               ...h,
               completions: { ...h.completions, [date]: next },
             };
-          }),
-        })),
+          });
+          return { habits: newHabits, xp: state.xp + xpGain };
+        }),
 
-      // ---- Goals ----
+      // ---- Goals (with XP for completing) ----
       addGoal: (goal) =>
         set((state) => ({
           goals: [
@@ -687,11 +792,20 @@ export const useLifeOS = create<LifeOSState>()(
           ],
         })),
       updateGoal: (id, updates) =>
-        set((state) => ({
-          goals: state.goals.map((g) =>
-            g.id === id ? { ...g, ...updates } : g
-          ),
-        })),
+        set((state) => {
+          const oldGoal = state.goals.find((g) => g.id === id);
+          const isCompletingGoal =
+            oldGoal &&
+            oldGoal.progress < 100 &&
+            updates.progress === 100;
+          const xpGain = isCompletingGoal ? 100 : 0;
+          return {
+            goals: state.goals.map((g) =>
+              g.id === id ? { ...g, ...updates } : g
+            ),
+            xp: state.xp + xpGain,
+          };
+        }),
       deleteGoal: (id) =>
         set((state) => ({
           goals: state.goals.filter((g) => g.id !== id),
@@ -710,13 +824,14 @@ export const useLifeOS = create<LifeOSState>()(
           ),
         })),
 
-      // ---- Journal ----
+      // ---- Journal (with XP) ----
       addJournalEntry: (entry) =>
         set((state) => ({
           journalEntries: [
             ...state.journalEntries,
             { ...entry, id: uuidv4(), createdAt: new Date().toISOString() },
           ],
+          xp: state.xp + 25,
         })),
       updateJournalEntry: (id, updates) =>
         set((state) => ({
@@ -772,18 +887,99 @@ export const useLifeOS = create<LifeOSState>()(
           notes: state.notes.filter((n) => n.id !== id),
         })),
 
-      // ---- Pomodoro ----
+      // ---- Pomodoro (with XP) ----
       addPomodoroSession: (session) =>
-        set((state) => ({
-          pomodoroSessions: [
-            ...state.pomodoroSessions,
-            { ...session, id: uuidv4() },
-          ],
-        })),
+        set((state) => {
+          const xpGain = session.completed && session.type === 'focus' ? 20 : 0;
+          return {
+            pomodoroSessions: [
+              ...state.pomodoroSessions,
+              { ...session, id: uuidv4() },
+            ],
+            xp: state.xp + xpGain,
+          };
+        }),
       updatePomodoroSettings: (settings) =>
         set((state) => ({
           pomodoroSettings: { ...state.pomodoroSettings, ...settings },
         })),
+
+      // ---- Gamification ----
+      addXP: (amount) =>
+        set((state) => ({
+          xp: state.xp + amount,
+        })),
+      dismissAchievement: () =>
+        set((state) => ({
+          newAchievements: state.newAchievements.slice(1),
+        })),
+
+      // ---- Coach ----
+      addCoachMessage: (message) =>
+        set((state) => ({
+          coachMessages: [
+            ...state.coachMessages,
+            { ...message, id: uuidv4(), timestamp: new Date().toISOString() },
+          ],
+        })),
+      clearCoachMessages: () => set({ coachMessages: [] }),
+
+      // ---- Weekly Reports ----
+      addWeeklyReport: (report) =>
+        set((state) => ({
+          weeklyReports: [
+            ...state.weeklyReports,
+            { ...report, id: uuidv4() },
+          ],
+        })),
+
+      // ---- Templates ----
+      addTemplate: (template) =>
+        set((state) => ({
+          templates: [
+            ...state.templates,
+            { ...template, id: uuidv4(), createdAt: new Date().toISOString() },
+          ],
+        })),
+      updateTemplate: (id, updates) =>
+        set((state) => ({
+          templates: state.templates.map((t) =>
+            t.id === id ? { ...t, ...updates } : t
+          ),
+        })),
+      deleteTemplate: (id) =>
+        set((state) => ({
+          templates: state.templates.filter((t) => t.id !== id),
+        })),
+
+      // ---- Daily Challenge ----
+      completeDailyChallenge: (date, challengeId) =>
+        set((state) => {
+          const existing = state.dailyChallenges.find(
+            (c) => c.date === date && c.challengeId === challengeId
+          );
+          if (existing?.completed) return state;
+          return {
+            dailyChallenges: [
+              ...state.dailyChallenges.filter((c) => c.date !== date),
+              { date, challengeId, completed: true },
+            ],
+            xp: state.xp + 50,
+          };
+        }),
+
+      // ---- Life Score ----
+      addLifeScoreEntry: (date, score) =>
+        set((state) => {
+          const existing = state.lifeScoreHistory.filter((e) => e.date !== date);
+          return {
+            lifeScoreHistory: [...existing, { date, score }].slice(-90),
+          };
+        }),
+
+      // ---- Streak ----
+      updateStreakData: (data) =>
+        set({ streakData: data }),
     }),
     {
       name: 'life-os-storage',

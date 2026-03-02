@@ -34,6 +34,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+// New stickiness feature imports
+import { MorningBriefing } from '@/components/features/morning-briefing';
+import { DailyChallenge } from '@/components/features/daily-challenge';
+import { LifeScore } from '@/components/features/life-score';
+import { XPBar } from '@/components/shared/XPBar';
+import { StreakBadge } from '@/components/shared/StreakBadge';
+import { ShareCard } from '@/components/shared/ShareCard';
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
@@ -302,17 +310,24 @@ export default function DashboardPage() {
             Section 1 -- Welcome Header
            ============================================================ */}
         <motion.header variants={cardVariants} className="mb-8">
-          <h1 className="text-3xl font-semibold text-[#F0F0F5] sm:text-4xl">
-            {getGreeting()},{' '}
-            <span className="gradient-text">User</span>
-          </h1>
-          <p className="mt-1 text-[#8888A0]">
-            {format(new Date(), 'EEEE, MMMM d, yyyy')}
-          </p>
-          <p className="mt-3 text-sm italic text-[#8888A0]">
-            &ldquo;{quote.text}&rdquo;{' '}
-            <span className="text-[#6C5CE7]">&mdash; {quote.author}</span>
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-semibold text-[#F0F0F5] sm:text-4xl">
+                {getGreeting()},{' '}
+                <span className="gradient-text">User</span>
+              </h1>
+              <p className="mt-1 text-[#8888A0]">
+                {format(new Date(), 'EEEE, MMMM d, yyyy')}
+              </p>
+              <p className="mt-3 text-sm italic text-[#8888A0]">
+                &ldquo;{quote.text}&rdquo;{' '}
+                <span className="text-[#6C5CE7]">&mdash; {quote.author}</span>
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <StreakBadge />
+            </div>
+          </div>
 
           {/* Quick stats */}
           <div className="mt-6 flex flex-wrap gap-3">
@@ -342,6 +357,26 @@ export default function DashboardPage() {
             />
           </div>
         </motion.header>
+
+        {/* ============================================================
+            Section 1.5 -- XP Bar + Stickiness features
+           ============================================================ */}
+        <motion.div variants={cardVariants} className="mb-6">
+          <XPBar />
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+          <motion.div variants={cardVariants}>
+            <MorningBriefing />
+          </motion.div>
+          <motion.div variants={cardVariants}>
+            <LifeScore />
+          </motion.div>
+        </div>
+
+        <motion.div variants={cardVariants} className="mb-6">
+          <DailyChallenge />
+        </motion.div>
 
         {/* ============================================================
             Section 2 -- Widget Grid
@@ -723,6 +758,16 @@ export default function DashboardPage() {
                 </span>
               </div>
             </div>
+          </GlassCard>
+
+          {/* ----------------------------------------------------------
+              Card 8 -- Share Card
+             ---------------------------------------------------------- */}
+          <GlassCard>
+            <h2 className="text-lg font-semibold text-[#F0F0F5] mb-4">
+              Share Your Progress
+            </h2>
+            <ShareCard />
           </GlassCard>
         </div>
       </motion.div>

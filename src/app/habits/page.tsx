@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useLifeOS } from "@/stores";
 import type { Habit } from "@/types";
+import { HabitHeatmap } from "@/components/features/habit-heatmap";
 import {
   format,
   startOfWeek,
@@ -1068,6 +1069,21 @@ export default function HabitsPage() {
           </>
         )}
 
+
+        {/* Habit Heatmaps */}
+        {habits.length > 0 && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3, ease: [0.4, 0, 0.2, 1] as const }}
+            className="mt-8 space-y-4"
+          >
+            <h2 className="text-lg font-semibold text-[#F0F0F5]">Activity Heatmaps</h2>
+            {habits.map((habit) => (
+              <HabitHeatmap key={habit.id} habit={habit} />
+            ))}
+          </motion.section>
+        )}
         {/* Dialog */}
         <HabitDialog
           open={dialogOpen}
