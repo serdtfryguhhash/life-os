@@ -14,10 +14,12 @@ import {
   Wallet,
   StickyNote,
   Timer,
+  ClipboardCheck,
   Settings,
   Menu,
   X,
 } from 'lucide-react';
+import { DataExport } from '@/components/data-export';
 import {
   Tooltip,
   TooltipContent,
@@ -39,6 +41,7 @@ const NAV_ITEMS = [
   { label: 'Finance', href: '/finance', icon: Wallet, color: '#00E676' },
   { label: 'Notes', href: '/notes', icon: StickyNote, color: '#00D2FF' },
   { label: 'Focus', href: '/focus', icon: Timer, color: '#FF5252' },
+  { label: 'Review', href: '/review', icon: ClipboardCheck, color: '#2DD4BF' },
 ] as const;
 
 // ============================================================
@@ -178,6 +181,7 @@ export function Sidebar() {
 
             {/* Mobile footer */}
             <div className="mt-auto flex flex-col gap-1 border-t border-[#2A2A3A] pt-3">
+              <DataExport />
               <Link
                 href="/settings"
                 className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[#8888A0] hover:bg-[#1A1A25] hover:text-[#F0F0F5]"
@@ -233,8 +237,22 @@ export function Sidebar() {
             {NAV_ITEMS.map((item) => renderNavItem(item, expanded))}
           </nav>
 
-          {/* Footer — settings + avatar */}
+          {/* Footer — data export + settings + avatar */}
           <div className="mt-auto flex flex-col gap-1 border-t border-[#2A2A3A] pt-3">
+            {/* Data Export */}
+            {expanded ? (
+              <DataExport />
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DataExport />
+                </TooltipTrigger>
+                <TooltipContent side="right" sideOffset={12}>
+                  Data
+                </TooltipContent>
+              </Tooltip>
+            )}
+
             {/* Settings */}
             {expanded ? (
               <Link
