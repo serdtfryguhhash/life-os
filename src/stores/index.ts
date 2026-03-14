@@ -187,7 +187,7 @@ const seedEvents: CalendarEvent[] = [
   },
   {
     id: uuidv4(),
-    title: 'Gym — Upper body',
+    title: 'Gym - Upper body',
     description: 'Bench press, overhead press, rows',
     date: todayStr,
     startTime: '07:00',
@@ -258,7 +258,7 @@ const seedTasks: Task[] = [
   {
     id: uuidv4(),
     title: 'Grocery shopping',
-    description: 'Weekly groceries — check the list on the fridge',
+    description: 'Weekly groceries - check the list on the fridge',
     priority: 'medium',
     status: 'todo',
     dueDate: tomorrowStr,
@@ -473,7 +473,7 @@ const seedJournalEntries: JournalEntry[] = [
     id: uuidv4(),
     date: todayStr,
     content:
-      'Had a productive morning. Knocked out the standup early and made solid progress on the dashboard API. Feeling good about the direction of the project. Need to remember to take more breaks though — caught myself sitting for 3 hours straight.',
+      'Had a productive morning. Knocked out the standup early and made solid progress on the dashboard API. Feeling good about the direction of the project. Need to remember to take more breaks though - caught myself sitting for 3 hours straight.',
     mood: 4 as Mood,
     gratitude: [
       'Good coffee this morning',
@@ -487,7 +487,7 @@ const seedJournalEntries: JournalEntry[] = [
     id: uuidv4(),
     date: yesterdayStr,
     content:
-      'Presentation went well! Got positive feedback from the team on the Q1 metrics. Celebrated with the new ramen place — it was incredible. Also finished a great chapter in the book. Trying to keep this momentum going.',
+      'Presentation went well! Got positive feedback from the team on the Q1 metrics. Celebrated with the new ramen place - it was incredible. Also finished a great chapter in the book. Trying to keep this momentum going.',
     mood: 5 as Mood,
     gratitude: [
       'Successful presentation',
@@ -501,7 +501,7 @@ const seedJournalEntries: JournalEntry[] = [
     id: uuidv4(),
     date: threeDaysAgoStr,
     content:
-      'Rough day. Slept poorly and it carried through the whole day. Struggled with focus and barely got anything done. Skipped the gym too. Need to prioritize sleep — it really is the foundation of everything else.',
+      'Rough day. Slept poorly and it carried through the whole day. Struggled with focus and barely got anything done. Skipped the gym too. Need to prioritize sleep - it really is the foundation of everything else.',
     mood: 2 as Mood,
     gratitude: [
       'At least I recognized the pattern',
@@ -594,7 +594,7 @@ const seedTransactions: Transaction[] = [
   },
   {
     id: uuidv4(),
-    title: 'Book — Designing Data-Intensive Applications',
+    title: 'Book - Designing Data-Intensive Applications',
     amount: 42.99,
     type: 'expense' as TransactionType,
     category: 'Education',
@@ -605,7 +605,7 @@ const seedTransactions: Transaction[] = [
 const seedNotes: Note[] = [
   {
     id: uuidv4(),
-    title: 'Meeting notes — Product sync',
+    title: 'Meeting notes - Product sync',
     content:
       '## Key takeaways\n- Push launch date to March 15\n- Need to align with marketing on messaging\n- Performance benchmarks look solid\n- Follow up with design on the new onboarding flow',
     category: 'Work',
@@ -616,7 +616,7 @@ const seedNotes: Note[] = [
   },
   {
     id: uuidv4(),
-    title: 'Recipe — Spicy miso ramen',
+    title: 'Recipe - Spicy miso ramen',
     content:
       '## Ingredients\n- 2 tbsp white miso paste\n- 1 tbsp chili oil\n- Fresh ramen noodles\n- Soft-boiled eggs\n- Chashu pork\n- Green onions, nori, sesame\n\n## Steps\n1. Make tare: miso + chili oil + soy sauce\n2. Prepare broth (chicken + dashi)\n3. Cook noodles al dente\n4. Assemble and top with egg, pork, garnishes',
     category: 'Personal',
@@ -627,7 +627,7 @@ const seedNotes: Note[] = [
   },
   {
     id: uuidv4(),
-    title: 'Book notes — Atomic Habits',
+    title: 'Book notes - Atomic Habits',
     content:
       '## Core ideas\n- Habits are the compound interest of self-improvement\n- Focus on systems, not goals\n- The 4 laws: make it obvious, attractive, easy, satisfying\n- Identity-based habits > outcome-based habits\n- Environment design is underrated',
     category: 'Learning',

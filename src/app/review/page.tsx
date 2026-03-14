@@ -382,7 +382,7 @@ export default function ReviewPage() {
         <p className="mt-1 text-sm text-[#8888A0]">{weekRange}</p>
       </motion.div>
 
-      {/* Week Score — hero card */}
+      {/* Week Score - hero card */}
       <GlassCard className="relative overflow-hidden" delay={0.05}>
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-10" style={{ background: `radial-gradient(circle, ${scoreColor}, transparent)` }} />
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-8">

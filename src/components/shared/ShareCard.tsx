@@ -58,7 +58,7 @@ export function ShareCard() {
               <span className="text-xs text-[#8888A0]">Level</span>
             </div>
             <p className="text-lg font-bold text-[#F0F0F5]">
-              {info.level} — {info.name}
+              {info.level} - {info.name}
             </p>
             <p className="text-xs text-[#8888A0]">{xp} XP</p>
           </div>

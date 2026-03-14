@@ -41,7 +41,7 @@ export function XPBar({ compact = false }: { compact?: boolean }) {
           </div>
           <div>
             <p className="text-sm font-semibold text-[#F0F0F5]">
-              Level {info.level} — {info.name}
+              Level {info.level} - {info.name}
             </p>
             <p className="text-xs text-[#8888A0]">
               {xp} XP

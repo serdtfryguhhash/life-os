@@ -166,7 +166,7 @@ export function DataExport() {
       mimeType = 'application/json';
       extension = 'json';
     } else {
-      // CSV — combine all modules with a module column
+      // CSV - combine all modules with a module column
       const allRows: Record<string, unknown>[] = [];
       selectedKeys.forEach((key) => {
         const items = state[key];

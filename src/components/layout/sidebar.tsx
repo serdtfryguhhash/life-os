@@ -37,7 +37,7 @@ import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 // ============================================================
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/', icon: LayoutDashboard, color: '#6C5CE7' },
+  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, color: '#6C5CE7' },
   { label: 'Calendar', href: '/calendar', icon: CalendarDays, color: '#00D2FF' },
   { label: 'Tasks', href: '/tasks', icon: CheckSquare, color: '#00E676' },
   { label: 'Habits', href: '/habits', icon: Flame, color: '#FF9100' },
@@ -62,7 +62,6 @@ export function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isActive = (href: string) => {
-    if (href === '/') return pathname === '/';
     return pathname.startsWith(href);
   };
 
@@ -269,7 +268,7 @@ export function Sidebar() {
             {NAV_ITEMS.map((item) => renderNavItem(item, expanded))}
           </nav>
 
-          {/* Footer — data export + settings + avatar */}
+          {/* Footer - data export + settings + avatar */}
           <div className="mt-auto flex flex-col gap-1 border-t border-[#2A2A3A] pt-3">
             {/* Data Export */}
             {expanded ? (

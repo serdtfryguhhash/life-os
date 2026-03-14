@@ -304,7 +304,7 @@ export default function CalendarPage() {
           transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const }}
           className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >
-          {/* Left — navigation */}
+          {/* Left - navigation */}
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -335,7 +335,7 @@ export default function CalendarPage() {
             </Button>
           </div>
 
-          {/* Right — view toggle + add */}
+          {/* Right - view toggle + add */}
           <div className="flex items-center gap-2">
             <div className="flex rounded-lg bg-[#1A1A25] border border-[#2A2A3A] p-0.5">
               {(['month', 'week', 'day'] as const).map((mode) => (

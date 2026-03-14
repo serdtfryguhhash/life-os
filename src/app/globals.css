@@ -51,7 +51,7 @@
 }
 
 /* ============================================================
-   LifeOS Custom Properties — Dark-first Design System
+   LifeOS Custom Properties - Dark-first Design System
    ============================================================ */
 :root {
   --radius: 0.625rem;
@@ -178,7 +178,7 @@
   border: 1px solid rgba(42, 42, 58, 0.5);
 }
 
-/* Gradient text — purple to cyan */
+/* Gradient text - purple to cyan */
 .gradient-text {
   background: linear-gradient(135deg, #6C5CE7, #00D2FF);
   -webkit-background-clip: text;

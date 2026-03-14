@@ -78,7 +78,7 @@ export function AchievementToast() {
               Achievement Unlocked!
             </p>
             <p className="text-xs text-[#8888A0]">
-              {current.title} — {current.description}
+              {current.title} - {current.description}
             </p>
           </div>
           <button
